@@ -370,6 +370,7 @@ To register a new security guard for the gatehouse:
 * **Access Control**: `NEIGHBORHOOD_ADMIN`, `GUARD`, `RESIDENT`
 * **Query Parameters**:
   * `neighborhoodId`: The neighborhood context (`nh-usj4-001`)
+  * `ownerMembershipId` (optional): Filter by owner membership ID (used by admin/guard calls. For `RESIDENT` calls, the backend automatically restricts results to their own membership resolved from the JWT context).
   * `status` (optional): Filter status (`ACTIVE`, `SUSPENDED`)
   * `sortBy` (optional): Property to sort by (`plateText`, `updatedAt`, etc.)
 * **Success Response (200 OK)**:
