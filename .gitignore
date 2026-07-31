@@ -1,0 +1,42 @@
+# Maven (Java Backend)
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+.mvn/
+*.versionsBackup
+
+# IDEs and Editors
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node / Angular (Frontend)
+**/node_modules/
+**/dist/
+**/.angular/
+**/tmp/
+
+# Logs and databases
+*.log
+.gradle/
+build/
+local.properties
+.h2.db
+*.db
+.env
+.env.*
+!.env.example
+
+# Operating System Files
+.DS_Store
+Thumbs.db
