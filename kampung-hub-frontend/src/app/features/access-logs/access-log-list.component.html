@@ -1,0 +1,219 @@
+<!-- FE-Req-1, 10: Gatehouse Checkpoint Logs & Security Station -->
+<div class="access-logs-page container">
+  
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="breadcrumbs">
+        <span>Gatehouse</span>
+        <span>&rsaquo;</span>
+        <span class="active">Access Logs</span>
+      </div>
+      <h1 class="page-title">Checkpoint Access Logs</h1>
+      <p class="page-subtitle">
+        Real-time security barrier transactions, ANPR automatic whitelist entries, and visitor check-ins for {{ activeMembership?.neighborhoodName }}.
+      </p>
+    </div>
+
+    <div class="header-right">
+      <button type="button" class="btn btn-outline" (click)="loadLogs()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>Refresh Logs</span>
+      </button>
+
+      <button *ngIf="isGuardOrAdmin" type="button" class="btn btn-primary" (click)="openManualModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>Record Barrier Entry</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" *ngIf="toast">
+    <div class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+      <span>{{ toast.message }}</span>
+      <button class="toast-close" (click)="toast = null">&times;</button>
+    </div>
+  </div>
+
+  <!-- Guard Gatehouse Quick Check-in Banner -->
+  <div class="card check-in-station-card" *ngIf="isGuardOrAdmin">
+    <div class="station-header">
+      <div class="station-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="station-title">Gatehouse Token Verification Station</h3>
+        <p class="station-sub">Enter or scan guest visitor pass token to verify access and open barrier.</p>
+      </div>
+    </div>
+
+    <div class="station-input-row">
+      <div class="token-field-wrapper">
+        <input 
+          type="text" 
+          [(ngModel)]="tokenCheckInInput" 
+          placeholder="Paste or scan token (e.g. vpass-token-...)" 
+          class="form-control token-input"
+          (keyup.enter)="onDirectCheckIn()"
+        />
+      </div>
+      <button 
+        type="button" 
+        class="btn btn-warning" 
+        [disabled]="!tokenCheckInInput.trim() || isCheckingIn"
+        (click)="onDirectCheckIn()">
+        <span *ngIf="!isCheckingIn">Verify & Open Gate</span>
+        <span *ngIf="isCheckingIn">Checking in...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Controls Bar (Search + Filter Tabs) -->
+  <div class="controls-bar">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        placeholder="Filter logs by vehicle plate, guard ID, or pass ID..." 
+        class="form-control search-input"
+      />
+    </div>
+
+    <div class="type-tabs">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="typeFilter === 'ALL'" 
+        (click)="typeFilter = 'ALL'">
+        All Access Types ({{ logs.length }})
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="typeFilter === 'ENTRY'" 
+        (click)="typeFilter = 'ENTRY'">
+        Entry
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="typeFilter === 'EXIT'" 
+        (click)="typeFilter = 'EXIT'">
+        Exit
+      </button>
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="card table-card">
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading barrier checkpoint logs...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredLogs.length === 0">
+      <p>No barrier access events recorded matching criteria.</p>
+    </div>
+
+    <table class="data-table" *ngIf="!isLoading && filteredLogs.length > 0">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>License Plate</th>
+          <th>Direction</th>
+          <th>Verified By</th>
+          <th>Linked Pass / Reference</th>
+          <th>Log ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of filteredLogs">
+          <td>
+            <span class="timestamp-text">{{ log.timestamp | date:'medium' }}</span>
+          </td>
+          <td>
+            <div class="plate-pill">
+              <span class="plate-text">{{ log.plateText }}</span>
+              <span class="plate-tag">MY</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="log.accessType === 'ENTRY' ? 'badge-success' : 'badge-info'">
+              {{ log.accessType }}
+            </span>
+          </td>
+          <td>
+            <span class="guard-pill">{{ log.verifiedByGuardId || 'SYSTEM_ANPR' }}</span>
+          </td>
+          <td>
+            <span *ngIf="log.visitorPassId" class="pass-ref">Pass: {{ log.visitorPassId }}</span>
+            <span *ngIf="log.membershipId" class="member-ref">Member: {{ log.membershipId }}</span>
+            <span *ngIf="!log.visitorPassId && !log.membershipId" class="text-muted">-</span>
+          </td>
+          <td>
+            <code class="log-id">{{ log.logId }}</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Record Barrier Entry Modal -->
+  <div class="modal-backdrop" *ngIf="showManualModal" (click)="closeManualModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Record Gatehouse Barrier Event</h2>
+        <button type="button" class="close-btn" (click)="closeManualModal()">&times;</button>
+      </div>
+
+      <form [formGroup]="manualLogForm" (ngSubmit)="onManualSubmit()" class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="manualPlate">Vehicle Plate Number (Malaysian Format)</label>
+          <input 
+            id="manualPlate" 
+            type="text" 
+            formControlName="plateText" 
+            (input)="onManualPlateInput($event)"
+            placeholder="e.g. WYY 1234 or VAA 888" 
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="accessType">Movement Direction</label>
+          <select id="accessType" formControlName="accessType" class="form-control">
+            <option value="ENTRY">ENTRY (Entering Community)</option>
+            <option value="EXIT">EXIT (Leaving Community)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="visitorPassId">Associated Visitor Pass ID (Optional)</label>
+          <input 
+            id="visitorPassId" 
+            type="text" 
+            formControlName="visitorPassId" 
+            placeholder="e.g. vpass-1" 
+            class="form-control"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="closeManualModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Log Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

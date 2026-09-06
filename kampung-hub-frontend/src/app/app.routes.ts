@@ -6,6 +6,8 @@ import { VehicleManagementComponent } from './features/vehicles/vehicle-manageme
 import { NeighborhoodListComponent } from './features/neighborhoods/neighborhood-list/neighborhood-list.component';
 import { NeighborhoodDetailComponent } from './features/neighborhoods/neighborhood-detail/neighborhood-detail.component';
 import { MemberListComponent } from './features/members/member-list.component';
+import { VisitorPassListComponent } from './features/visitor-passes/visitor-pass-list.component';
+import { AccessLogListComponent } from './features/access-logs/access-log-list.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 
@@ -36,6 +38,16 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'visitor-passes',
+    component: VisitorPassListComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'access-logs',
+    component: AccessLogListComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'neighborhoods',
     component: NeighborhoodListComponent,
     canActivate: [authGuard]
@@ -53,6 +65,10 @@ export const routes: Routes = [
       {
         path: 'vehicles',
         component: VehicleManagementComponent
+      },
+      {
+        path: 'passes',
+        component: VisitorPassListComponent
       },
       {
         path: 'members',
