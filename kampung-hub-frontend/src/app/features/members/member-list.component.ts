@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NeighborhoodService } from '../../core/services/neighborhood.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,7 +12,7 @@ import { MembershipContext } from '../../core/models/membership.model';
 @Component({
   selector: 'app-member-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './member-list.component.html',
   styleUrls: ['./member-list.component.css']
 })
@@ -35,7 +36,8 @@ export class MemberListComponent implements OnInit, OnDestroy {
   constructor(
     private neighborhoodService: NeighborhoodService,
     public authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.inviteForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -46,15 +48,30 @@ export class MemberListComponent implements OnInit, OnDestroy {
     });
   }
 
+  get targetNeighborhoodId(): string {
+    const routeId = this.route.snapshot.params['id'] || this.route.parent?.snapshot.params['id'];
+    return routeId || this.activeMembership?.neighborhoodId || '';
+  }
+
   ngOnInit(): void {
     this.sub.add(
       this.authService.session$.subscribe((session) => {
         this.activeMembership = session?.activeMembership || null;
-        if (this.activeMembership?.neighborhoodId) {
+        if (this.targetNeighborhoodId) {
           this.loadMembers();
         }
       })
     );
+
+    if (this.route.parent) {
+      this.sub.add(
+        this.route.parent.params.subscribe(() => {
+          if (this.targetNeighborhoodId) {
+            this.loadMembers();
+          }
+        })
+      );
+    }
   }
 
   ngOnDestroy(): void {
@@ -63,11 +80,12 @@ export class MemberListComponent implements OnInit, OnDestroy {
   }
 
   loadMembers(): void {
-    if (!this.activeMembership?.neighborhoodId) return;
+    const neighborhoodId = this.targetNeighborhoodId;
+    if (!neighborhoodId) return;
 
     this.isLoading = true;
     const statusParam = this.statusFilter !== 'ALL' ? this.statusFilter : undefined;
-    this.neighborhoodService.getMembers(this.activeMembership.neighborhoodId, statusParam).subscribe({
+    this.neighborhoodService.getMembers(neighborhoodId, statusParam).subscribe({
       next: (data) => {
         this.members = data;
         this.isLoading = false;
@@ -111,7 +129,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
   }
 
   onInviteSubmit(): void {
-    if (this.inviteForm.invalid || !this.activeMembership) {
+    if (this.inviteForm.invalid || !this.targetNeighborhoodId) {
       this.inviteForm.markAllAsTouched();
       return;
     }
@@ -125,7 +143,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
       roles: [formVal.roles]
     };
 
-    this.neighborhoodService.inviteMember(this.activeMembership.neighborhoodId, payload).subscribe({
+    this.neighborhoodService.inviteMember(this.targetNeighborhoodId, payload).subscribe({
       next: (created) => {
         const origin = window.location.origin;
         this.generatedInviteUrl = `${origin}/register?token=${created.invitationToken}`;
@@ -157,9 +175,9 @@ export class MemberListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.activeMembership) return;
+    if (!this.targetNeighborhoodId) return;
 
-    this.neighborhoodService.deleteMember(this.activeMembership.neighborhoodId, member.membershipId).subscribe({
+    this.neighborhoodService.deleteMember(this.targetNeighborhoodId, member.membershipId).subscribe({
       next: () => {
         this.showToast('Member removed successfully.', 'success');
         this.loadMembers();

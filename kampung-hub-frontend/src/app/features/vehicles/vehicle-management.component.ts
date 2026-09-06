@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { VehicleService } from '../../core/services/vehicle.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,7 +13,7 @@ import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.com
 @Component({
   selector: 'app-vehicle-management',
   standalone: true,
-  imports: [CommonModule, VehicleListComponent, VehicleFormComponent],
+  imports: [CommonModule, RouterModule, VehicleListComponent, VehicleFormComponent],
   templateUrl: './vehicle-management.component.html',
   styleUrls: ['./vehicle-management.component.css']
 })
@@ -30,18 +31,34 @@ export class VehicleManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private vehicleService: VehicleService,
-    public authService: AuthService
+    public authService: AuthService,
+    private route: ActivatedRoute
   ) {}
+
+  get targetNeighborhoodId(): string {
+    const routeId = this.route.snapshot.params['id'] || this.route.parent?.snapshot.params['id'];
+    return routeId || this.activeMembership?.neighborhoodId || '';
+  }
 
   ngOnInit(): void {
     this.sub.add(
       this.authService.session$.subscribe((session) => {
         this.activeMembership = session?.activeMembership || null;
-        if (this.activeMembership?.neighborhoodId) {
+        if (this.targetNeighborhoodId) {
           this.loadVehicles();
         }
       })
     );
+
+    if (this.route.parent) {
+      this.sub.add(
+        this.route.parent.params.subscribe(() => {
+          if (this.targetNeighborhoodId) {
+            this.loadVehicles();
+          }
+        })
+      );
+    }
   }
 
   ngOnDestroy(): void {
@@ -50,13 +67,14 @@ export class VehicleManagementComponent implements OnInit, OnDestroy {
   }
 
   loadVehicles(): void {
-    if (!this.activeMembership) return;
+    const neighborhoodId = this.targetNeighborhoodId;
+    if (!neighborhoodId) return;
 
     this.isLoading = true;
-    const neighborhoodId = this.activeMembership.neighborhoodId;
-    
-    // If resident, can filter by their ownerMembershipId or see community
-    const ownerMembershipId = this.isResidentOnly() ? this.activeMembership.membershipId : undefined;
+    const isViewingOwnNeighborhood = this.activeMembership?.neighborhoodId === neighborhoodId;
+    const ownerMembershipId = (this.isResidentOnly() && isViewingOwnNeighborhood) 
+      ? this.activeMembership?.membershipId 
+      : undefined;
 
     this.vehicleService.getVehicles(neighborhoodId, ownerMembershipId).subscribe({
       next: (data) => {
@@ -113,7 +131,7 @@ export class VehicleManagementComponent implements OnInit, OnDestroy {
         color: payload.color,
         unitNumber: payload.unitNumber || this.activeMembership?.unitNumber,
         zoneMask: payload.zoneMask || 'ALL_ZONES',
-        neighborhoodId: this.activeMembership?.neighborhoodId,
+        neighborhoodId: this.targetNeighborhoodId,
         ownerMembershipId: this.activeMembership?.membershipId
       };
 

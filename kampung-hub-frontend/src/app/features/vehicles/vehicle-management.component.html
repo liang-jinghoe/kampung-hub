@@ -60,7 +60,7 @@
   <app-vehicle-form
     *ngIf="showFormModal"
     [vehicleToEdit]="selectedVehicleForEdit"
-    [activeNeighborhoodId]="activeMembership?.neighborhoodId || ''"
+    [activeNeighborhoodId]="targetNeighborhoodId"
     [activeUnitNumber]="activeMembership?.unitNumber || ''"
     [isAdmin]="isAdmin"
     (formSubmit)="handleFormSubmit($event)"

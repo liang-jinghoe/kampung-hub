@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { VisitorPassService } from '../../core/services/visitor-pass.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,7 +12,7 @@ import { MembershipContext } from '../../core/models/membership.model';
 @Component({
   selector: 'app-visitor-pass-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './visitor-pass-list.component.html',
   styleUrls: ['./visitor-pass-list.component.css']
 })
@@ -35,7 +36,8 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
   constructor(
     private passService: VisitorPassService,
     public authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     const today = new Date().toISOString().substring(0, 10);
     const tomorrow = new Date(Date.now() + 86400000).toISOString().substring(0, 10);
@@ -49,15 +51,30 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
     });
   }
 
+  get targetNeighborhoodId(): string {
+    const routeId = this.route.snapshot.params['id'] || this.route.parent?.snapshot.params['id'];
+    return routeId || this.activeMembership?.neighborhoodId || '';
+  }
+
   ngOnInit(): void {
     this.sub.add(
       this.authService.session$.subscribe((session) => {
         this.activeMembership = session?.activeMembership || null;
-        if (this.activeMembership?.neighborhoodId) {
+        if (this.targetNeighborhoodId) {
           this.loadPasses();
         }
       })
     );
+
+    if (this.route.parent) {
+      this.sub.add(
+        this.route.parent.params.subscribe(() => {
+          if (this.targetNeighborhoodId) {
+            this.loadPasses();
+          }
+        })
+      );
+    }
   }
 
   ngOnDestroy(): void {
@@ -66,14 +83,16 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
   }
 
   loadPasses(): void {
-    if (!this.activeMembership?.neighborhoodId) return;
+    const neighborhoodId = this.targetNeighborhoodId;
+    if (!neighborhoodId) return;
 
     this.isLoading = true;
-    const unitParam = this.isResidentOnly() ? this.activeMembership.unitNumber : undefined;
+    const isViewingOwnNeighborhood = this.activeMembership?.neighborhoodId === neighborhoodId;
+    const unitParam = (this.isResidentOnly() && isViewingOwnNeighborhood) ? this.activeMembership?.unitNumber : undefined;
     const statusParam = this.statusFilter !== 'ALL' ? this.statusFilter : undefined;
 
     this.passService.searchVisitorPasses(
-      this.activeMembership.neighborhoodId,
+      neighborhoodId,
       unitParam,
       undefined,
       statusParam
@@ -131,7 +150,7 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
   }
 
   onCreateSubmit(): void {
-    if (this.createForm.invalid || !this.activeMembership) {
+    if (this.createForm.invalid || !this.targetNeighborhoodId) {
       this.createForm.markAllAsTouched();
       return;
     }
@@ -140,8 +159,8 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
     const payload: CreateVisitorPassDto = {
       visitorName: formVal.visitorName,
       visitorPlateText: formVal.visitorPlateText.trim().toUpperCase(),
-      unitNumber: formVal.unitNumber || this.activeMembership.unitNumber,
-      neighborhoodId: this.activeMembership.neighborhoodId,
+      unitNumber: formVal.unitNumber || this.activeMembership?.unitNumber || '',
+      neighborhoodId: this.targetNeighborhoodId,
       validFrom: formVal.validFrom,
       validUntil: formVal.validUntil
     };
