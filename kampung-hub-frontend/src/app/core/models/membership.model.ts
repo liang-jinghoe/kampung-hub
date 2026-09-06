@@ -20,4 +20,5 @@ export interface MembershipContext {
   neighborhoodName: string;
   unitNumber: string;
   roles: string[];
+  tier?: string;
 }

@@ -1,0 +1,128 @@
+<!-- FE-Req-15: Unified Dynamic Dashboard responsive to active neighborhood context & role -->
+<div class="dashboard-page container">
+  
+  <!-- Active Neighborhood Hero Card -->
+  <div class="hero-card">
+    <div class="hero-content">
+      <div class="hero-badge-row">
+        <span class="badge" [ngClass]="{
+          'badge-primary': activeNeighborhood?.subscriptionTier === 'PREMIUM_LANDED',
+          'badge-info': activeNeighborhood?.subscriptionTier === 'BASIC_LANDED'
+        }">
+          {{ activeNeighborhood?.subscriptionTier || 'COMMUNITY' }}
+        </span>
+        <span class="badge badge-success" *ngIf="activeMembership?.unitNumber">
+          UNIT {{ activeMembership?.unitNumber }}
+        </span>
+      </div>
+      <h1 class="hero-title">{{ activeMembership?.neighborhoodName || 'Community Hub' }}</h1>
+      <p class="hero-desc">
+        Property Type: <strong>{{ activeNeighborhood?.propertyType || 'LANDED' }}</strong> &bull; Capacity: <strong>{{ activeNeighborhood?.maxAllowedUnits || 100 }} units</strong>
+      </p>
+      <div class="hero-meta-chips">
+        <div class="meta-chip">
+          <span class="meta-chip-label">Active Role:</span>
+          <span class="meta-chip-value text-primary">{{ activeMembership?.roles?.join(', ') }}</span>
+        </div>
+        <div class="meta-chip" *ngIf="activeMembership?.neighborhoodId">
+          <span class="meta-chip-label">Community ID:</span>
+          <span class="meta-chip-value">{{ activeMembership?.neighborhoodId }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="hero-quick-actions">
+      <h3 class="quick-actions-heading">Quick Actions</h3>
+      <div class="quick-actions-btns">
+        <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/vehicles" class="btn btn-primary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Manage Vehicles
+        </a>
+        <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/visitor-passes" class="btn btn-outline btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Create Visitor Pass
+        </a>
+        <a *ngIf="isAdminOrCommittee()" routerLink="/members" class="btn btn-outline btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Invite Member
+        </a>
+        <a *ngIf="isAdminOrCommittee() || isGuard()" routerLink="/access-logs" class="btn btn-warning btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Gatehouse Checkpoint
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards -->
+  <div class="grid grid-3 metrics-grid">
+    
+    <!-- Whitelist Vehicles -->
+    <div class="card metric-card" routerLink="/vehicles">
+      <div class="metric-icon-box bg-emerald">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 17h10M7 7h10M7 12h10"/>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Whitelisted Vehicles</span>
+        <span class="metric-value">{{ vehicleCount }}</span>
+        <span class="metric-subtext">Active automated gate plates</span>
+      </div>
+    </div>
+
+    <!-- Active Visitor Passes -->
+    <div class="card metric-card" routerLink="/visitor-passes">
+      <div class="metric-icon-box bg-blue">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="18" height="14" x="3" y="5" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 9h4M14 12h4M14 15h2"/>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Active Visitor Passes</span>
+        <span class="metric-value">{{ activePassCount }}</span>
+        <span class="metric-subtext">Valid single/multi-entry passes</span>
+      </div>
+    </div>
+
+    <!-- Gate Access Logs -->
+    <div class="card metric-card" routerLink="/access-logs">
+      <div class="metric-icon-box bg-amber">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Checkpoint Logs</span>
+        <span class="metric-value">{{ recentLogsCount }}</span>
+        <span class="metric-subtext">Automated ANPR & Guard entries</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Role Specific Guidelines / Information -->
+  <div class="card role-guide-card">
+    <h3 class="guide-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+      Security & Access Protocol
+    </h3>
+    <div class="guide-grid">
+      <div class="guide-item" *ngIf="isAdminOrCommittee()">
+        <h4>Community Administration</h4>
+        <p>As an Administrator/Committee member, you can manage neighborhood properties, onboard new residents via invitation tokens, review gatehouse logs, and maintain vehicle whitelist records.</p>
+      </div>
+      <div class="guide-item" *ngIf="isResident()">
+        <h4>Resident Whitelist</h4>
+        <p>Register your personal vehicle plates for seamless automated gate entry. Generate one-click QR visitor passes for guests and food delivery drivers.</p>
+      </div>
+      <div class="guide-item" *ngIf="isGuard()">
+        <h4>Guard Gatehouse Station</h4>
+        <p>Use the Gatehouse module to verify visitor pass tokens, perform automated check-ins, and record manual entry/exit logs for unscheduled visitors.</p>
+      </div>
+    </div>
+  </div>
+
+</div>

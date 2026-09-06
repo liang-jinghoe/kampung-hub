@@ -1,0 +1,171 @@
+<!-- FE-Req-15: Global Responsive Navbar with Context Switcher -->
+<nav class="navbar" *ngIf="session">
+  <div class="nav-container">
+    <!-- Brand / Logo -->
+    <div class="brand-section">
+      <a routerLink="/dashboard" class="brand-logo">
+        <div class="logo-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Kampung<span class="text-primary">Hub</span></span>
+          <span class="brand-sub">Smart Security</span>
+        </div>
+      </a>
+
+      <!-- FE-Req-15: Multi-Neighborhood Context Selector Dropdown -->
+      <div class="neighborhood-switcher-wrapper" *ngIf="availableMemberships.length > 0">
+        <button 
+          type="button"
+          class="neighborhood-selector-btn" 
+          (click)="toggleNeighborhoodDropdown($event)"
+          [class.active]="isNeighborhoodDropdownOpen"
+          aria-haspopup="true"
+          [attr.aria-expanded]="isNeighborhoodDropdownOpen">
+          <div class="neighborhood-meta">
+            <span class="n-label">Active Neighborhood</span>
+            <span class="n-name">
+              {{ activeMembership?.neighborhoodName || 'Select Neighborhood' }}
+            </span>
+          </div>
+          <span class="badge" [ngClass]="{
+            'badge-primary': activeMembership?.tier === 'ENTERPRISE',
+            'badge-warning': activeMembership?.tier === 'PREMIUM',
+            'badge-info': activeMembership?.tier === 'BASIC'
+          }">
+            {{ activeMembership?.tier || 'TIER' }}
+          </span>
+          <svg class="chevron-icon" [class.rotate]="isNeighborhoodDropdownOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="dropdown-menu neighborhood-dropdown" *ngIf="isNeighborhoodDropdownOpen">
+          <div class="dropdown-header">
+            <span>Switch Community</span>
+            <span class="count-badge">{{ availableMemberships.length }} available</span>
+          </div>
+          
+          <div class="dropdown-list">
+            <div 
+              *ngFor="let m of availableMemberships" 
+              class="dropdown-item neighborhood-item"
+              [class.selected]="m.membershipId === activeMembership?.membershipId"
+              (click)="switchNeighborhood(m)">
+              <div class="item-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div class="item-content">
+                <div class="item-title">{{ m.neighborhoodName }}</div>
+                <div class="item-sub">
+                  <span class="role-pill">{{ m.roles.join(', ') }}</span>
+                  <span class="unit-pill" *ngIf="m.unitNumber">Unit: {{ m.unitNumber }}</span>
+                </div>
+              </div>
+              <div class="item-status" *ngIf="m.membershipId === activeMembership?.membershipId">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Navigation Links -->
+    <div class="nav-links">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a *ngIf="isAdminOrCommittee()" routerLink="/neighborhoods" routerLinkActive="active" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Neighborhoods</span>
+      </a>
+
+      <a *ngIf="isAdminOrCommittee()" routerLink="/members" routerLinkActive="active" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Members</span>
+      </a>
+
+      <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/vehicles" routerLinkActive="active" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 17h10M7 7h10M7 12h10"/></svg>
+        <span>Vehicles</span>
+      </a>
+
+      <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/visitor-passes" routerLinkActive="active" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 9h4M14 12h4M14 15h2"/></svg>
+        <span>Visitor Passes</span>
+      </a>
+
+      <a *ngIf="isAdminOrCommittee() || isGuard()" routerLink="/access-logs" routerLinkActive="active" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Gatehouse Logs</span>
+      </a>
+    </div>
+
+    <!-- Right Profile Section -->
+    <div class="user-profile-section">
+      <div class="user-dropdown-wrapper">
+        <button 
+          type="button" 
+          class="user-profile-btn" 
+          (click)="toggleUserDropdown($event)"
+          [class.active]="isUserDropdownOpen">
+          <div class="user-avatar">
+            {{ session.fullName ? session.fullName.charAt(0).toUpperCase() : 'U' }}
+          </div>
+          <div class="user-details-compact">
+            <span class="user-name">{{ session.fullName }}</span>
+            <span class="badge" [ngClass]="{
+              'badge-danger': hasRole('ADMIN'),
+              'badge-warning': hasRole('COMMITTEE'),
+              'badge-success': hasRole('RESIDENT'),
+              'badge-info': hasRole('GUARD')
+            }">
+              {{ activeMembership?.roles?.[0] || 'GUEST' }}
+            </span>
+          </div>
+          <svg class="chevron-icon" [class.rotate]="isUserDropdownOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <!-- User Dropdown Menu -->
+        <div class="dropdown-menu user-dropdown" *ngIf="isUserDropdownOpen">
+          <div class="dropdown-user-header">
+            <div class="dropdown-user-name">{{ session.fullName }}</div>
+            <div class="dropdown-user-email">{{ session.email }}</div>
+            <div class="dropdown-user-role-line">
+              <span class="role-chip">{{ activeMembership?.roles?.join(', ') || 'No Role' }}</span>
+              <span class="unit-chip" *ngIf="activeMembership?.unitNumber">#{{ activeMembership?.unitNumber }}</span>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+
+          <button type="button" class="dropdown-item logout-item" (click)="logout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Context Switching Loading Overlay -->
+<div class="context-switching-overlay" *ngIf="isSwitchingContext">
+  <div class="spinner"></div>
+  <p class="switching-text">{{ switchMessage }}</p>
+</div>

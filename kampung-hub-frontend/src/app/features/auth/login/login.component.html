@@ -1,0 +1,127 @@
+<!-- FE-Req-8 & 9: Login Component with Design System and Quick Switch Presets -->
+<div class="login-wrapper">
+  <div class="login-container">
+    
+    <!-- Branding Header -->
+    <div class="login-header">
+      <div class="logo-circle">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Kampung<span class="text-primary">Hub</span></h1>
+      <p class="login-subtitle">Smart Neighborhood Security & Access Portal</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card login-card">
+      <h2 class="card-title">Sign In to Your Community</h2>
+      <p class="card-desc">Enter your platform credentials to access gate whitelist, visitor passes, and neighborhood logs.</p>
+
+      <!-- Error Alert -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Reactive Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-icon-wrapper">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            <input 
+              id="email" 
+              type="email" 
+              formControlName="email" 
+              placeholder="e.g. ahmad@example.com" 
+              class="form-control"
+              [class.is-invalid]="f['email'].touched && f['email'].invalid"
+            />
+          </div>
+          <div class="form-error" *ngIf="f['email'].touched && f['email'].errors">
+            <span *ngIf="f['email'].errors['required']">Email is required.</span>
+            <span *ngIf="f['email'].errors['email']">Please enter a valid email address.</span>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="password">Password</label>
+          </div>
+          <div class="input-icon-wrapper">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input 
+              id="password" 
+              type="password" 
+              formControlName="password" 
+              placeholder="••••••••" 
+              class="form-control"
+              [class.is-invalid]="f['password'].touched && f['password'].invalid"
+            />
+          </div>
+          <div class="form-error" *ngIf="f['password'].touched && f['password'].errors">
+            <span *ngIf="f['password'].errors['required']">Password is required.</span>
+            <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters.</span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Sign In</span>
+          <span *ngIf="isLoading" class="btn-loading">
+            <span class="spinner-small"></span> Authenticating...
+          </span>
+        </button>
+      </form>
+
+      <!-- Quick Role Presets for Demo/Testing -->
+      <div class="demo-presets-section">
+        <div class="divider-text">
+          <span>Quick Demo Logins</span>
+        </div>
+        
+        <div class="preset-buttons-grid">
+          <button type="button" class="preset-btn" (click)="fillPreset('ahmad@example.com')">
+            <div class="preset-avatar admin">A</div>
+            <div class="preset-info">
+              <span class="preset-name">Ahmad</span>
+              <span class="preset-role">Admin (Multi-hood)</span>
+            </div>
+          </button>
+
+          <button type="button" class="preset-btn" (click)="fillPreset('siti@example.com')">
+            <div class="preset-avatar resident">S</div>
+            <div class="preset-info">
+              <span class="preset-name">Siti</span>
+              <span class="preset-role">Resident (Taman Damai)</span>
+            </div>
+          </button>
+
+          <button type="button" class="preset-btn" (click)="fillPreset('guard@example.com')">
+            <div class="preset-avatar guard">G</div>
+            <div class="preset-info">
+              <span class="preset-name">Gate Guard</span>
+              <span class="preset-role">Security Checkpoint</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Links -->
+    <div class="login-footer">
+      <span>Have an onboarding invitation?</span>
+      <a routerLink="/register" class="register-link">Activate Member Account</a>
+    </div>
+
+  </div>
+</div>
