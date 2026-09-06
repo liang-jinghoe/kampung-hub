@@ -85,10 +85,24 @@ export class NeighborhoodListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/neighborhoods', id]);
   }
 
+  get adminNeighborhoodIds(): string[] {
+    const memberships = this.authService.getAvailableMemberships();
+    return memberships
+      .filter((m) => m.roles.some((r) => r === 'ADMIN' || r === 'COMMITTEE'))
+      .map((m) => m.neighborhoodId);
+  }
+
   get filteredNeighborhoods(): Neighborhood[] {
-    if (!this.searchQuery.trim()) return this.neighborhoods;
+    // Restrict neighborhoods directory to communities where current user has Admin/Committee responsibilities
+    const adminIds = this.adminNeighborhoodIds;
+    let list = this.neighborhoods;
+    if (adminIds.length > 0) {
+      list = list.filter((n) => adminIds.includes(n.id));
+    }
+
+    if (!this.searchQuery.trim()) return list;
     const q = this.searchQuery.toLowerCase().trim();
-    return this.neighborhoods.filter((n) => 
+    return list.filter((n) => 
       n.name.toLowerCase().includes(q) || n.id.toLowerCase().includes(q)
     );
   }
