@@ -1,0 +1,76 @@
+<!-- FE-Req-1, 2, 3: Vehicle Card Grandchild Component with Malaysian Plate Visual -->
+<div class="vehicle-card" [class.suspended]="!isActive">
+  <div class="card-header">
+    <div class="unit-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      </svg>
+      <span>Unit {{ vehicle.unitNumber }}</span>
+    </div>
+    
+    <span class="badge" [ngClass]="isActive ? 'badge-success' : 'badge-danger'">
+      {{ vehicle.status }}
+    </span>
+  </div>
+
+  <!-- Malaysian License Plate Design -->
+  <div class="plate-container">
+    <div class="malaysia-plate" [class.suspended-plate]="!isActive">
+      <div class="plate-text">{{ vehicle.plateText }}</div>
+      <div class="plate-tag">MY</div>
+    </div>
+  </div>
+
+  <div class="vehicle-details">
+    <div class="detail-row">
+      <span class="detail-label">Model:</span>
+      <span class="detail-value font-semibold">{{ vehicle.model }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Color:</span>
+      <span class="detail-value">
+        <span class="color-dot" [style.background-color]="vehicle.color.toLowerCase()"></span>
+        {{ vehicle.color }}
+      </span>
+    </div>
+    <div class="detail-row" *ngIf="vehicle.zoneMask">
+      <span class="detail-label">Access Zone:</span>
+      <span class="zone-tag">{{ vehicle.zoneMask }}</span>
+    </div>
+  </div>
+
+  <!-- Actions (Edit, Suspend/Activate, Delete) -->
+  <div class="card-actions" *ngIf="canManage">
+    <button 
+      type="button" 
+      class="btn btn-outline btn-sm" 
+      (click)="onEdit()" 
+      title="Edit vehicle details">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      Edit
+    </button>
+
+    <button 
+      type="button" 
+      class="btn btn-sm" 
+      [ngClass]="isActive ? 'btn-warning' : 'btn-success'"
+      (click)="onToggleStatus()"
+      [title]="isActive ? 'Suspend vehicle whitelist access' : 'Activate vehicle whitelist access'">
+      {{ isActive ? 'Suspend' : 'Activate' }}
+    </button>
+
+    <button 
+      type="button" 
+      class="btn btn-danger btn-sm btn-icon-only" 
+      (click)="onDelete()" 
+      title="Delete vehicle from whitelist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+    </button>
+  </div>
+</div>
