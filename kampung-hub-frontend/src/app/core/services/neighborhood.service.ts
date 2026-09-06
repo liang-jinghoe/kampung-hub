@@ -42,7 +42,7 @@ export class NeighborhoodService {
 
   // Direct register member
   directRegisterMember(neighborhoodId: string, data: any): Observable<Membership> {
-    return this.http.post<Membership>(`${this.baseUrl}/${neighborhoodId}/members`, data);
+    return this.http.post<Membership>(`${this.baseUrl}/${neighborhoodId}/members/direct`, data);
   }
 
   // Invite member

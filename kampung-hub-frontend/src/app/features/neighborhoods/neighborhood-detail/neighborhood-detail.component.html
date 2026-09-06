@@ -1,0 +1,72 @@
+<!-- FE-Req-13: Neighborhood Detail Page with Header & Child Navigation -->
+<div class="neighborhood-detail-page container" *ngIf="neighborhood">
+  
+  <!-- Breadcrumbs & Back -->
+  <div class="header-nav">
+    <a routerLink="/neighborhoods" class="back-link">
+      &larr; Back to Neighborhoods
+    </a>
+  </div>
+
+  <!-- Detail Hero Header -->
+  <div class="detail-header card">
+    <div class="header-top">
+      <div>
+        <span class="badge" [ngClass]="{
+          'badge-primary': neighborhood.subscriptionTier === 'PREMIUM_LANDED',
+          'badge-info': neighborhood.subscriptionTier === 'BASIC_LANDED'
+        }">
+          {{ neighborhood.subscriptionTier }}
+        </span>
+        <h1 class="community-title">{{ neighborhood.name }}</h1>
+        <p class="community-id">ID: <code>{{ neighborhood.id }}</code></p>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-pill">
+          <span class="stat-label">Property Type</span>
+          <span class="stat-val">{{ neighborhood.propertyType }}</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Capacity</span>
+          <span class="stat-val">{{ neighborhood.maxAllowedUnits }} units</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="detail-tabs">
+      <a 
+        [routerLink]="['/neighborhoods', neighborhood.id]" 
+        routerLinkActive="active" 
+        [routerLinkActiveOptions]="{exact: true}"
+        class="tab-link">
+        Overview
+      </a>
+      <a 
+        [routerLink]="['/neighborhoods', neighborhood.id, 'vehicles']" 
+        routerLinkActive="active" 
+        class="tab-link">
+        Whitelisted Vehicles
+      </a>
+      <a 
+        [routerLink]="['/neighborhoods', neighborhood.id, 'passes']" 
+        routerLinkActive="active" 
+        class="tab-link">
+        Visitor Passes
+      </a>
+      <a 
+        [routerLink]="['/neighborhoods', neighborhood.id, 'members']" 
+        routerLinkActive="active" 
+        class="tab-link">
+        Directory Members
+      </a>
+    </div>
+  </div>
+
+  <!-- Nested Route Content / Router Outlet -->
+  <div class="detail-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

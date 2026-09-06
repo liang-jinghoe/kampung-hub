@@ -1,0 +1,188 @@
+<!-- FE-Req-12, 14: Neighborhoods Directory Page with Tier Filters and Cards -->
+<div class="neighborhoods-page container">
+  
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="breadcrumbs">
+        <span>Admin Portal</span>
+        <span>&rsaquo;</span>
+        <span class="active">Neighborhoods</span>
+      </div>
+      <h1 class="page-title">Neighborhood Directory</h1>
+      <p class="page-subtitle">
+        Manage registered gated communities, subscription tiers, and resident capacities.
+      </p>
+    </div>
+
+    <div class="header-right">
+      <button *ngIf="isAdmin" type="button" class="btn btn-primary" (click)="openCreateModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>New Community</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" *ngIf="toast">
+    <div class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+      <span>{{ toast.message }}</span>
+      <button class="toast-close" (click)="toast = null">&times;</button>
+    </div>
+  </div>
+
+  <!-- Controls Bar (Search + FE-Req-14: Tier Filter Tabs) -->
+  <div class="controls-bar">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        placeholder="Search communities by name or ID..." 
+        class="form-control search-input"
+      />
+    </div>
+
+    <!-- FE-Req-14: Query parameter tier filter tabs -->
+    <div class="tier-tabs">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="activeTierFilter === ''" 
+        (click)="setTierFilter('')">
+        All Tiers
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="activeTierFilter === 'BASIC_LANDED'" 
+        (click)="setTierFilter('BASIC_LANDED')">
+        Basic Landed
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="activeTierFilter === 'PREMIUM_LANDED'" 
+        (click)="setTierFilter('PREMIUM_LANDED')">
+        Premium Landed
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading communities...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state card" *ngIf="!isLoading && filteredNeighborhoods.length === 0">
+    <h3 class="empty-title">No Communities Found</h3>
+    <p class="empty-desc">No neighborhoods found matching the selected filter criteria.</p>
+  </div>
+
+  <!-- Communities Grid -->
+  <div class="grid grid-3" *ngIf="!isLoading && filteredNeighborhoods.length > 0">
+    <div *ngFor="let n of filteredNeighborhoods" class="card neighborhood-card">
+      <div class="card-header">
+        <span class="badge" [ngClass]="{
+          'badge-primary': n.subscriptionTier === 'PREMIUM_LANDED',
+          'badge-info': n.subscriptionTier === 'BASIC_LANDED'
+        }">
+          {{ n.subscriptionTier }}
+        </span>
+        <span class="status-indicator active" title="Active Community">
+          <span class="status-dot"></span> Active
+        </span>
+      </div>
+
+      <div class="card-body">
+        <h3 class="neighborhood-name">{{ n.name }}</h3>
+        <p class="neighborhood-id">ID: <code>{{ n.id }}</code></p>
+        
+        <div class="meta-details">
+          <div class="meta-row">
+            <span class="meta-label">Property Type:</span>
+            <span class="meta-val">{{ n.propertyType }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Max Allowed Units:</span>
+            <span class="meta-val">{{ n.maxAllowedUnits }} units</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Created:</span>
+            <span class="meta-val">{{ n.createdAt | date:'mediumDate' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <!-- FE-Req-12: Programmatic navigation to detail view -->
+        <button type="button" class="btn btn-outline btn-block" (click)="viewNeighborhood(n.id)">
+          Manage Community &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Modal Form -->
+  <div class="modal-backdrop" *ngIf="showCreateModal" (click)="closeCreateModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Register New Community</h2>
+        <button type="button" class="close-btn" (click)="closeCreateModal()">&times;</button>
+      </div>
+
+      <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()" class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="name">Neighborhood Name</label>
+          <input 
+            id="name" 
+            type="text" 
+            formControlName="name" 
+            placeholder="e.g. Eco Sanctuary" 
+            class="form-control"
+          />
+        </div>
+
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label class="form-label" for="propertyType">Property Type</label>
+            <select id="propertyType" formControlName="propertyType" class="form-control">
+              <option value="LANDED">LANDED</option>
+              <option value="HIGH_RISE">HIGH_RISE</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="subscriptionTier">Subscription Tier</label>
+            <select id="subscriptionTier" formControlName="subscriptionTier" class="form-control">
+              <option value="BASIC_LANDED">BASIC_LANDED</option>
+              <option value="PREMIUM_LANDED">PREMIUM_LANDED</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="maxAllowedUnits">Maximum Allowed Units</label>
+          <input 
+            id="maxAllowedUnits" 
+            type="number" 
+            formControlName="maxAllowedUnits" 
+            class="form-control"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="closeCreateModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Neighborhood</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

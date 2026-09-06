@@ -1,0 +1,136 @@
+<!-- FE-Req-8, 9, 10: Public Member Onboarding Activation Page -->
+<div class="register-wrapper">
+  <div class="register-container">
+    
+    <!-- Branding Header -->
+    <div class="register-header">
+      <div class="logo-circle">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h1 class="register-title">Kampung<span class="text-primary">Hub</span></h1>
+      <p class="register-subtitle">Community Member Activation & Onboarding</p>
+    </div>
+
+    <!-- Success State Card -->
+    <div class="card register-card success-card" *ngIf="isSuccess">
+      <div class="success-icon-box">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h2 class="card-title text-center">Account Successfully Activated!</h2>
+      <p class="card-desc text-center">
+        Your resident profile has been activated with access to your neighborhood gate and vehicle whitelist services.
+      </p>
+      <a routerLink="/login" class="btn btn-primary btn-block">
+        Proceed to Sign In
+      </a>
+    </div>
+
+    <!-- Registration Card -->
+    <div class="card register-card" *ngIf="!isSuccess">
+      <h2 class="card-title">Complete Your Profile</h2>
+      <p class="card-desc">Set your account details and security password to finalize onboarding.</p>
+
+      <!-- Token Warning Alert -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <div class="token-info-pill" *ngIf="token">
+        <span class="token-label">Invitation Token:</span>
+        <span class="token-code">{{ token }}</span>
+      </div>
+
+      <!-- Reactive Form -->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name (As per NRIC/Passport)</label>
+          <input 
+            id="fullName" 
+            type="text" 
+            formControlName="fullName" 
+            placeholder="e.g. Siti Nurhaliza" 
+            class="form-control"
+            [class.is-invalid]="f['fullName'].touched && f['fullName'].invalid"
+          />
+          <div class="form-error" *ngIf="f['fullName'].touched && f['fullName'].errors">
+            <span *ngIf="f['fullName'].errors['required']">Full name is required.</span>
+            <span *ngIf="f['fullName'].errors['minlength']">Full name must be at least 3 characters.</span>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label class="form-label" for="phoneNumber">Contact Phone Number</label>
+          <input 
+            id="phoneNumber" 
+            type="tel" 
+            formControlName="phoneNumber" 
+            placeholder="e.g. +60123456789" 
+            class="form-control"
+            [class.is-invalid]="f['phoneNumber'].touched && f['phoneNumber'].invalid"
+          />
+          <div class="form-error" *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors">
+            <span *ngIf="f['phoneNumber'].errors['required']">Phone number is required.</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Create Password</label>
+          <input 
+            id="password" 
+            type="password" 
+            formControlName="password" 
+            placeholder="Min. 6 characters" 
+            class="form-control"
+            [class.is-invalid]="f['password'].touched && f['password'].invalid"
+          />
+          <div class="form-error" *ngIf="f['password'].touched && f['password'].errors">
+            <span *ngIf="f['password'].errors['required']">Password is required.</span>
+            <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters.</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <input 
+            id="confirmPassword" 
+            type="password" 
+            formControlName="confirmPassword" 
+            placeholder="Repeat password" 
+            class="form-control"
+            [class.is-invalid]="(f['confirmPassword'].touched && f['confirmPassword'].invalid) || (registerForm.touched && registerForm.errors?.['passwordsMismatch'])"
+          />
+          <div class="form-error" *ngIf="registerForm.touched && registerForm.errors?.['passwordsMismatch']">
+            <span>Passwords do not match.</span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading || !token">
+          <span *ngIf="!isLoading">Complete Onboarding</span>
+          <span *ngIf="isLoading" class="btn-loading">
+            <span class="spinner-small"></span> Activating Account...
+          </span>
+        </button>
+      </form>
+
+      <div class="register-footer">
+        <span>Already have an active account?</span>
+        <a routerLink="/login" class="login-link">Sign In</a>
+      </div>
+
+    </div>
+
+  </div>
+</div>
