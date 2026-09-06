@@ -49,17 +49,22 @@
   font-family: var(--font-heading);
   font-size: 2rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: #ffffff; /* Crisp white title */
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
 
 .hero-desc {
-  color: var(--text-muted);
+  color: #cbd5e1; /* Clear light slate text */
   font-size: 0.9375rem;
   max-width: 600px;
   margin-bottom: 16px;
   line-height: 1.5;
+}
+
+.hero-desc strong {
+  color: #ffffff; /* High contrast white for Property Type and Capacity */
+  font-weight: 700;
 }
 
 .hero-meta-chips {
@@ -71,31 +76,35 @@
 .meta-chip {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 4px 12px;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 14px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   font-size: 0.8125rem;
 }
 
 .meta-chip-label {
-  color: var(--text-muted);
+  color: #94a3b8; /* Light readable gray */
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .meta-chip-value {
-  font-weight: 600;
-  color: var(--text-main);
+  font-weight: 700;
+  color: #ffffff; /* Crisp white */
 }
 
-.text-primary {
-  color: var(--primary-light);
+.meta-chip-value.text-primary {
+  color: #34d399; /* Vibrant emerald for Active Role */
 }
 
 /* Quick Actions */
 .hero-quick-actions {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid var(--border-color);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-lg);
   padding: 20px;
   min-width: 240px;
@@ -106,7 +115,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: #94a3b8;
   margin-bottom: 12px;
 }
 
@@ -119,6 +128,16 @@
 .quick-actions-btns .btn {
   justify-content: flex-start;
   width: 100%;
+}
+
+.hero-quick-actions .btn-outline {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.hero-quick-actions .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
 /* Metric Cards */

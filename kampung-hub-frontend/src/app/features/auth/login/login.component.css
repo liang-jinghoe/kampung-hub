@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
-  background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 1) 70%);
+  background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 1) 75%);
 }
 
 .login-container {
@@ -27,50 +27,52 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   margin-bottom: var(--spacing-sm);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.4);
 }
 
 .login-title {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 4px;
+  color: #ffffff; /* Crisp white title */
 }
 
 .text-primary {
-  color: var(--primary-light);
+  color: #34d399; /* Vibrant emerald green */
 }
 
 .login-subtitle {
-  color: var(--text-muted);
+  color: #94a3b8; /* Light readable slate */
   font-size: 0.9375rem;
 }
 
 .login-card {
   padding: 32px;
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(30, 41, 59, 0.85);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-xl);
 }
 
 .card-title {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 6px;
-  color: var(--text-main);
+  color: #ffffff; /* Crisp white */
 }
 
 .card-desc {
-  color: var(--text-muted);
+  color: #cbd5e1; /* Clear readable description */
   font-size: 0.875rem;
   margin-bottom: 24px;
   line-height: 1.5;
@@ -80,6 +82,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+.form-label {
+  color: #e2e8f0; /* Clear readable label */
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
 }
 
 .label-row {
@@ -97,12 +107,49 @@
 .input-icon {
   position: absolute;
   left: 14px;
-  color: var(--text-muted);
+  color: #94a3b8;
   pointer-events: none;
 }
 
 .input-icon-wrapper .form-control {
   padding-left: 44px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  transition: all var(--transition-fast);
+}
+
+.input-icon-wrapper .form-control::placeholder {
+  color: #64748b;
+}
+
+.input-icon-wrapper .form-control:focus {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  color: #ffffff;
+}
+
+.form-error {
+  color: #fb7185;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.alert-danger {
+  background: rgba(225, 29, 72, 0.15);
+  border: 1px solid rgba(225, 29, 72, 0.4);
+  color: #fecdd3;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .btn-block {
@@ -110,6 +157,7 @@
   margin-top: 8px;
   padding: 12px;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .btn-loading {
@@ -146,7 +194,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--border-color);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .divider-text span {
@@ -154,16 +202,16 @@
   background: #1e293b;
   padding: 0 12px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: #94a3b8;
 }
 
 .preset-buttons-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .preset-btn {
@@ -171,65 +219,70 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 10px 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-color);
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
-  color: var(--text-main);
+  color: #ffffff;
   text-align: center;
 }
 
 .preset-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #34d399;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .preset-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.75rem;
+  font-weight: 800;
+  font-size: 0.8125rem;
   color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .preset-avatar.admin {
-  background: #ef4444;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .preset-avatar.resident {
-  background: var(--primary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .preset-avatar.guard {
-  background: #0ea5e9;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
 }
 
 .preset-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .preset-name {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .preset-role {
-  font-size: 0.625rem;
-  color: var(--text-muted);
+  font-size: 0.6875rem;
+  color: #94a3b8;
+  font-weight: 500;
 }
 
 .login-footer {
   text-align: center;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,11 +290,12 @@
 }
 
 .register-link {
-  color: var(--primary-light);
-  font-weight: 600;
+  color: #34d399;
+  font-weight: 700;
   text-decoration: none;
 }
 
 .register-link:hover {
   text-decoration: underline;
+  color: #6ee7b7;
 }

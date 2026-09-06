@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
-  background: radial-gradient(circle at 50% 20%, rgba(13, 148, 136, 0.15) 0%, rgba(15, 23, 42, 1) 70%);
+  background: radial-gradient(circle at 50% 20%, rgba(13, 148, 136, 0.15) 0%, rgba(15, 23, 42, 1) 75%);
 }
 
 .register-container {
@@ -27,50 +27,52 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   margin-bottom: var(--spacing-sm);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.4);
 }
 
 .register-title {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 4px;
+  color: #ffffff;
 }
 
 .text-primary {
-  color: var(--primary-light);
+  color: #34d399;
 }
 
 .register-subtitle {
-  color: var(--text-muted);
+  color: #94a3b8;
   font-size: 0.9375rem;
 }
 
 .register-card {
   padding: 32px;
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(30, 41, 59, 0.85);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-xl);
 }
 
 .card-title {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 6px;
-  color: var(--text-main);
+  color: #ffffff;
 }
 
 .card-desc {
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-size: 0.875rem;
   margin-bottom: 20px;
   line-height: 1.5;
@@ -80,22 +82,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-color);
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 8px 14px;
   border-radius: var(--radius-md);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   font-size: 0.75rem;
 }
 
 .token-label {
-  color: var(--text-muted);
+  color: #94a3b8;
 }
 
 .token-code {
   font-family: monospace;
-  font-weight: 600;
-  color: var(--primary-light);
+  font-weight: 700;
+  color: #34d399;
 }
 
 .register-form {
@@ -104,11 +106,46 @@
   gap: var(--spacing-md);
 }
 
+.form-label {
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.register-card .form-control {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+}
+
+.register-card .form-control::placeholder {
+  color: #64748b;
+}
+
+.register-card .form-control:focus {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  color: #ffffff;
+}
+
+.form-error {
+  color: #fb7185;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
 .btn-block {
   width: 100%;
   margin-top: 8px;
   padding: 12px;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .btn-loading {
@@ -130,7 +167,7 @@
 .register-footer {
   text-align: center;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,36 +176,45 @@
 }
 
 .login-link {
-  color: var(--primary-light);
-  font-weight: 600;
+  color: #34d399;
+  font-weight: 700;
   text-decoration: none;
 }
 
 .login-link:hover {
   text-decoration: underline;
+  color: #6ee7b7;
 }
 
-/* Success Card */
-.success-card {
+.success-state {
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 20px 0;
 }
 
-.success-icon-box {
-  width: 72px;
-  height: 72px;
+.success-icon {
+  width: 64px;
+  height: 64px;
   border-radius: var(--radius-full);
   background: rgba(16, 185, 129, 0.15);
-  color: var(--primary-light);
+  border: 2px solid #10b981;
+  color: #34d399;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  margin: 0 auto 16px;
 }
 
-.text-center {
-  text-align: center;
+.success-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.success-desc {
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
 }
