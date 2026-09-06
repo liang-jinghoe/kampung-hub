@@ -44,7 +44,6 @@ INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-001', 'ADMI
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-ss15-999', 'TENANT');
 
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-002', 'RESIDENT');
-INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-002', 'GUARD');
 
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-003', 'TENANT');
 

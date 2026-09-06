@@ -330,7 +330,6 @@ INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-001', 'OWNE
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-001', 'ADMIN'); -- Ahmad is a resident admin
 
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-002', 'RESIDENT');
-INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-002', 'GUARD'); -- Siti is a resident guard
 
 INSERT INTO membership_roles (membership_id, role) VALUES ('mem-usj4-003', 'TENANT');
 

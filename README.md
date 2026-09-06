@@ -105,7 +105,7 @@ The Login page ([http://localhost:4200/login](http://localhost:4200/login)) also
 | User Profile | Email | Password | Assigned Roles | Associated Communities |
 | :--- | :--- | :--- | :--- | :--- |
 | **Ahmad Zulkifli** | `ahmad@example.com` | `password123` | `ADMIN`, `OWNER`, `TENANT` | **Taman USJ 4** (`nh-usj4-001`) *(Admin)*<br>**SS15 Condominium** (`nh-ss15-002`) *(Tenant)* |
-| **Siti Aminah** | `siti@example.com` | `password123` | `RESIDENT`, `GUARD` | **Taman USJ 4** (`nh-usj4-001`) *(Unit: No. 45 Jalan USJ 4/2)* |
+| **Siti Aminah** | `siti@example.com` | `password123` | `RESIDENT` | **Taman USJ 4** (`nh-usj4-001`) *(Unit: No. 45 Jalan USJ 4/2)* |
 | **Guard Muthu** | `muthu@example.com` | `password123` | `GUARD` | **Taman USJ 4** (`nh-usj4-001`) *(Gatehouse Checkpoint Station)* |
 | **Chong Wei** | `chong@example.com` | *(Invitation Token)* | `TENANT` / `RESIDENT` | **Taman USJ 4** *(Pending Activation)* |
 
