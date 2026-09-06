@@ -178,7 +178,19 @@ export class VehicleManagementComponent implements OnInit, OnDestroy {
     return this.authService.hasRole('ADMIN') || this.authService.hasRole('COMMITTEE');
   }
 
+  get isResident(): boolean {
+    return this.authService.hasRole('RESIDENT') || this.authService.hasRole('OWNER') || this.authService.hasRole('TENANT');
+  }
+
+  get isGuard(): boolean {
+    return this.authService.hasRole('GUARD') && !this.isAdmin && !this.isResident;
+  }
+
+  get canManage(): boolean {
+    return !this.isGuard && (this.isAdmin || this.isResident);
+  }
+
   isResidentOnly(): boolean {
-    return this.authService.hasRole('RESIDENT') && !this.isAdmin;
+    return this.isResident && !this.isAdmin;
   }
 }

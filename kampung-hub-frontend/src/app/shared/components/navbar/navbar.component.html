@@ -96,12 +96,12 @@
         <span>Members</span>
       </a>
 
-      <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/vehicles" routerLinkActive="active" class="nav-link">
+      <a *ngIf="isAdminOrCommittee() || isResident() || isGuard()" routerLink="/vehicles" routerLinkActive="active" class="nav-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 17h10M7 7h10M7 12h10"/></svg>
         <span>Vehicles</span>
       </a>
 
-      <a *ngIf="isAdminOrCommittee() || isResident()" routerLink="/visitor-passes" routerLinkActive="active" class="nav-link">
+      <a *ngIf="isAdminOrCommittee() || isResident() || isGuard()" routerLink="/visitor-passes" routerLinkActive="active" class="nav-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 9h4M14 12h4M14 15h2"/></svg>
         <span>Visitor Passes</span>
       </a>

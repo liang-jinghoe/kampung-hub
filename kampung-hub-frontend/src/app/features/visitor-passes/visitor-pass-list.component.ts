@@ -193,11 +193,27 @@ export class VisitorPassListComponent implements OnInit, OnDestroy {
     }, 4000);
   }
 
+  get isAdmin(): boolean {
+    return this.authService.hasRole('ADMIN') || this.authService.hasRole('COMMITTEE');
+  }
+
+  get isResident(): boolean {
+    return this.authService.hasRole('RESIDENT') || this.authService.hasRole('OWNER') || this.authService.hasRole('TENANT');
+  }
+
+  get isGuard(): boolean {
+    return this.authService.hasRole('GUARD') && !this.isAdmin && !this.isResident;
+  }
+
+  get canGeneratePass(): boolean {
+    return !this.isGuard && (this.isAdmin || this.isResident);
+  }
+
   get isAdminOrGuard(): boolean {
-    return this.authService.hasRole('ADMIN') || this.authService.hasRole('GUARD') || this.authService.hasRole('COMMITTEE');
+    return this.isAdmin || this.authService.hasRole('GUARD');
   }
 
   isResidentOnly(): boolean {
-    return this.authService.hasRole('RESIDENT') && !this.isAdminOrGuard;
+    return this.isResident && !this.isAdminOrGuard;
   }
 }
