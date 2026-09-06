@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./kampung-hub-backend
+      dockerfile: Dockerfile
+    container_name: kampung-hub-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8080
+    restart: unless-stopped
+    networks:
+      - kampung-net
+
+  frontend:
+    build:
+      context: ./kampung-hub-frontend
+      dockerfile: Dockerfile
+    container_name: kampung-hub-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - kampung-net
+
+networks:
+  kampung-net:
+    driver: bridge
